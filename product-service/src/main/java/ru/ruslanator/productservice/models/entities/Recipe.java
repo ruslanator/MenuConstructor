@@ -1,38 +1,34 @@
-package ru.ruslanator.productservice.models;
+package ru.ruslanator.productservice.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "ingredient")
-@Table(name = "ingredient_table")
+
+@Entity(name = "recipe")
+@Table(name = "recipe_table")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"})
-public class Ingredient {
+public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ingredient_id")
     private int id;
 
     @Column(name = "name")
     private String name;
 
-    @Column(name = "maker")
-    private String maker;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "proteins")
     private int proteins;
@@ -56,4 +52,14 @@ public class Ingredient {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {CascadeType.PERSIST,
+                CascadeType.MERGE})
+    @JoinTable(
+            name = "recipe_ingredient",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+    )
+    private Set<Ingredient> ingredients = new HashSet<>();
 }

@@ -2,8 +2,7 @@ package ru.ruslanator.productservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.ruslanator.productservice.models.Ingredient;
-import ru.ruslanator.productservice.models.Recipe;
+import ru.ruslanator.productservice.models.entities.Ingredient;
 import ru.ruslanator.productservice.services.IngredientService;
 
 import java.util.List;

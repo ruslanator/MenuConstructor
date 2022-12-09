@@ -2,8 +2,8 @@ package ru.ruslanator.productservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.ruslanator.productservice.models.Ingredient;
-import ru.ruslanator.productservice.models.Recipe;
+import ru.ruslanator.productservice.models.entities.Ingredient;
+import ru.ruslanator.productservice.models.entities.Recipe;
 import ru.ruslanator.productservice.services.RecipeService;
 
 import java.util.List;
@@ -31,13 +31,18 @@ public class RecipeController {
         recipeService.create(recipe);
     }
 
-    @PostMapping("/add/{id}")
-    public void addIngredient(@RequestBody Ingredient ingredient, @PathVariable int id) {
-        recipeService.addIngredient(id, ingredient);
+    @PostMapping("/remove/{recipeId}-{ingredientId}")
+    public void deleteIngredient(@PathVariable int recipeId, @PathVariable int ingredientId) {
+        recipeService.deleteIngredient(recipeId, ingredientId);
     }
 
-    @PostMapping
-    public void deleteRecipe(int id) {
+    @PostMapping("/remove/{id}")
+    public void deleteRecipe(@PathVariable int id) {
         recipeService.deleteById(id);
+    }
+
+    @PostMapping("/add/{recipeId}-{ingredientId}")
+    public void addIngredient(@PathVariable int recipeId, @PathVariable int ingredientId) {
+        recipeService.addIngredient(recipeId, ingredientId);
     }
 }

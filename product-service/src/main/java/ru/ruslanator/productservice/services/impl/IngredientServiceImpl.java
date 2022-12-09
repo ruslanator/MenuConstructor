@@ -2,7 +2,7 @@ package ru.ruslanator.productservice.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.ruslanator.productservice.models.Ingredient;
+import ru.ruslanator.productservice.models.entities.Ingredient;
 import ru.ruslanator.productservice.repositories.IngredientRepository;
 import ru.ruslanator.productservice.services.IngredientService;
 

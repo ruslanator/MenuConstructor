@@ -1,9 +1,11 @@
 package ru.ruslanator.productservice.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.ruslanator.productservice.models.Ingredient;
-import ru.ruslanator.productservice.models.Recipe;
+import ru.ruslanator.productservice.models.dto.RecipeDTO;
+import ru.ruslanator.productservice.models.entities.Ingredient;
+import ru.ruslanator.productservice.models.entities.Recipe;
 import ru.ruslanator.productservice.repositories.IngredientRepository;
 import ru.ruslanator.productservice.repositories.RecipeRepository;
 import ru.ruslanator.productservice.services.RecipeService;
@@ -15,6 +17,7 @@ import java.util.*;
 public class RecipeServiceImpl implements RecipeService {
 
     private final RecipeRepository recipeRepo;
+    private final IngredientRepository ingredientRepo;
 
     @Override
     public Optional<Recipe> findById(int id) {
@@ -37,19 +40,28 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public void addIngredient(int id, Ingredient ingredient) {
-        Recipe recipe = recipeRepo.findById(id).get();
-        Set<Ingredient> ingredients = new HashSet<>();
+    public void addIngredient(int recipeId, int ingredientId) {
+        Recipe recipe = recipeRepo.findById(recipeId).get();
+        Ingredient ingredient = ingredientRepo.findById(ingredientId).get();
+        Set<Ingredient> ingredients = new HashSet<>(recipe.getIngredients());
         ingredients.add(ingredient);
         recipe.setIngredients(ingredients);
+        sumNutrients(recipe);
+        recipeRepo.save(recipe);
+    }
+
+    @Override
+    public void deleteIngredient(int recipeId, int ingredientId) {
+        Recipe recipe = recipeRepo.findById(recipeId).get();
+        Ingredient ingredient = ingredientRepo.findById(ingredientId).get();
+        Set<Ingredient> ingredients = new HashSet<>(recipe.getIngredients());
+        ingredients.remove(ingredient);
+        recipe.setIngredients(ingredients);
+        sumNutrients(recipe);
         recipeRepo.save(recipe);
     }
 
     private void sumNutrients(Recipe recipe) {
-        recipe.setProteins(0);
-        recipe.setCarbs(0);
-        recipe.setFats(0);
-        recipe.setCalories(0);
         recipe.setProteins(recipe.getIngredients().stream()
                 .mapToInt(Ingredient::getProteins).sum());
         recipe.setCarbs(recipe.getIngredients().stream()
@@ -58,5 +70,10 @@ public class RecipeServiceImpl implements RecipeService {
                 .mapToInt(Ingredient::getFats).sum());
         recipe.setCalories(recipe.getIngredients().stream()
                 .mapToInt(Ingredient::getCalories).sum());
+    }
+
+    private RecipeDTO convertToDTO(Recipe recipe) {
+        ModelMapper mapper = new ModelMapper();
+        return mapper.map(recipe, RecipeDTO.class);
     }
 }

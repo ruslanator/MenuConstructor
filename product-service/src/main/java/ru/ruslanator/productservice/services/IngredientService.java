@@ -1,7 +1,7 @@
 package ru.ruslanator.productservice.services;
 
 import org.springframework.stereotype.Service;
-import ru.ruslanator.productservice.models.Ingredient;
+import ru.ruslanator.productservice.models.entities.Ingredient;
 
 import java.util.List;
 import java.util.Optional;
